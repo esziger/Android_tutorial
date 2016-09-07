@@ -1,7 +1,10 @@
 package app.sunshine.com.example.gergely.sunshine;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +53,36 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
+        else if (id == R.id.action_map)
+        {
+            openPreferredLocationInMap();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openPreferredLocationInMap() {
+        Log.v("MAINACTIVITY","Action map in MainActivity");
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String location = sharedPref.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        final String GEO_BASE = "geo:0,0?";
+        final String QUERY_PARAM = "q";
+
+        Uri locationUri = Uri.parse(GEO_BASE).buildUpon()
+                .appendQueryParameter(QUERY_PARAM, location).
+                        build();
+
+
+        intent.setData(locationUri);
+
+        if(intent.resolveActivity(getPackageManager()) != null)
+        {
+            startActivity(intent);
+        }
     }
 }

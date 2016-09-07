@@ -1,22 +1,19 @@
 package app.sunshine.com.example.gergely.sunshine;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -38,11 +35,11 @@ public class DetailActivity extends ActionBarActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.detail, menu);
+
         return true;
     }
 
@@ -68,7 +65,14 @@ public class DetailActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private static final String LOG_TAG = PlaceholderFragment.class.getSimpleName();
+
+        private static final String FORECAST_SHARE_HASHTAG = "#SunshineApp";
+        private String mForeCastString;
+
         public PlaceholderFragment() {
+            //only call onCreateOptionMenu If we have this set.
+            setHasOptionsMenu(true);
         }
 
         @Override
@@ -80,11 +84,41 @@ public class DetailActivity extends ActionBarActivity {
             Intent intent = getActivity().getIntent();
             if(intent != null && intent.hasExtra(Intent.EXTRA_TEXT))
             {
-                String value = intent.getStringExtra(Intent.EXTRA_TEXT);
+                mForeCastString = intent.getStringExtra(Intent.EXTRA_TEXT);
                 TextView textView = (TextView)rootView.findViewById(R.id.detail_text);
-                textView.setText(value);
+                textView.setText(mForeCastString);
             }
             return rootView;
         }
+
+        private Intent createShareForecastIntent()
+        {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT,
+                    mForeCastString + FORECAST_SHARE_HASHTAG);
+            return shareIntent;
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            //super.onCreateOptionsMenu(menu, inflater);
+            inflater.inflate(R.menu.detailfragment, menu);
+
+            MenuItem item = menu.findItem(R.id.menu_item_share);
+
+            ShareActionProvider mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+
+            if(mShareActionProvider != null)
+            {
+                mShareActionProvider.setShareIntent(createShareForecastIntent());
+            }
+            else {
+                Log.d(LOG_TAG,"Share Action Provider is null!");
+            }
+        }
+
+
     }
 }
