@@ -1,7 +1,11 @@
 package app.sunshine.com.example.gergely.sunshine;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,8 +17,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +53,7 @@ public class ForecastFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        updateWeather();
     }
 
     //weather APi key
@@ -81,6 +88,20 @@ public class ForecastFragment extends Fragment {
 
         ListView listview = (ListView) view.findViewById(R.id.listview_forecast);
         listview.setAdapter(mForecastAdapter);
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Context context = getActivity();
+                String forecast = mForecastAdapter.getItem(position).toString();
+
+                Intent startDetailActivityIntent = new Intent(context,DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, forecast);
+                startActivity(startDetailActivityIntent);
+
+            }
+        });
+
         return view;
     }
 
@@ -95,14 +116,23 @@ public class ForecastFragment extends Fragment {
 
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            weatherTask.execute("94043");
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
-
-
     }
+
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = sharedPref.getString(getString(R.string.pref_location_key),
+                                               getString(R.string.pref_location_default));
+
+        Log.v(LOG_TAG,location);
+        weatherTask.execute(location);
+    }
+
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]>
     {
