@@ -56,33 +56,14 @@ public class ForecastFragment extends Fragment {
         updateWeather();
     }
 
-    //weather APi key
-    //955b2c18b6acca76a70af7a3add079b4
-    //http://api.openweathermap.org/data/2.5/weather?q=London&APPID=955b2c18b6acca76a70af7a3add079b4&mode=html
-    //for 7 days
-    //api.openweathermap.org/data/2.5/forecast/daily?q=London&mode=xml&units=metric&cnt=7
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ////////////////////Start of Networking ////////////////
-
-       // String stringUrl = "http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&APPID=955b2c18b6acca76a70af7a3add079b4&mode=json&units=metric&cnt=7";
-        //new FetchWeatherTask().execute();
-
-        ////////////////////End of Networking ////////////////
-
-        String[] values = new String[]{"Today - Sunny - 21",
-                                       "Tomorrow - Sunny - 22",
-                                       "Sunday - Sunny - 22",
-                                       "Monday - Sunny - 22"};
-
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(values));
 
         mForecastAdapter = new ArrayAdapter<String>(getActivity(),
                                                     R.layout.list_item_forecast,
                                                     R.id.list_item_forecast_textview,
-                                                    weekForecast);
+                                                    new ArrayList<String>());
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -128,7 +109,6 @@ public class ForecastFragment extends Fragment {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = sharedPref.getString(getString(R.string.pref_location_key),
                                                getString(R.string.pref_location_default));
-
         Log.v(LOG_TAG,location);
         weatherTask.execute(location);
     }
@@ -177,7 +157,7 @@ public class ForecastFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are available at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
-                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&APPID=955b2c18b6acca76a70af7a3add079b4&mode=json&units=metric&cnt=7");
+                //URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&APPID=SOMETHING&mode=json&units=metric&cnt=7");
 
                 final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?";
                 final String QUERY_PARAM = "q";
