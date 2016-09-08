@@ -157,7 +157,6 @@ public class ForecastFragment extends Fragment {
             String format = "json";
             String units = "metric";
             int numdays = 7;
-            String appid = "955b2c18b6acca76a70af7a3add079b4";
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -177,9 +176,10 @@ public class ForecastFragment extends Fragment {
                                         .appendQueryParameter(FORMAT_PARAM, format)
                                         .appendQueryParameter(UNITS_PARAM, units)
                                         .appendQueryParameter(DAYS_PARAM, Integer.toString(numdays))
-                                        .appendQueryParameter(APPID_PARAM,appid)
+                                        .appendQueryParameter(APPID_PARAM,appid.getAPP_ID())
                                         .build();
                 URL url = new URL(buildUri.toString());
+
 
                 //Log.v("FetchWeatherTask", "Built URI" + buildUri.toString());
 
