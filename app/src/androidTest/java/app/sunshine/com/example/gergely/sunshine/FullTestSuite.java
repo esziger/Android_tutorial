@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package app.sunshine.com.example.gergely.sunshine.data;
+package app.sunshine.com.example.gergely.sunshine;
 
 import android.test.suitebuilder.TestSuiteBuilder;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import app.sunshine.com.example.gergely.sunshine.data.TestPractice;
+
 public class FullTestSuite extends TestSuite {
     public static Test suite() {
-        return new TestSuiteBuilder(FullTestSuite.class)
-                .includeAllPackagesUnderHere().build();
+       // return new TestSuiteBuilder(FullTestSuite.class)
+       //         .includeAllPackagesUnderHere().build();
+        TestSuite suite = new TestSuite(TestPractice.class);
+        //suite.addTest();
+        return suite;
     }
 
     public FullTestSuite() {
