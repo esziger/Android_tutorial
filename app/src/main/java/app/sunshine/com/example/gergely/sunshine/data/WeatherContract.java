@@ -45,6 +45,7 @@ public class WeatherContract {
         public static final String COLUMN_COORD_LAT = "latitude";
         public static final String COLUMN_COORD_LONG = "longitude";
         public static final String COLUMN_CITY_NAME = "city_name";
+        public static final String COLUMN_LOCATION_SETTING = "setting";
     }
 
     /* Inner class that defines the table contents of the weather table */
