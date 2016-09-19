@@ -3,6 +3,7 @@ package app.sunshine.com.example.gergely.sunshine;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -37,12 +38,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import app.sunshine.com.example.gergely.sunshine.data.WeatherContract;
+
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ForecastFragment extends Fragment {
 
-    private ArrayAdapter<String> mForecastAdapter;
+    private ForecastAdapter mForecastAdapter;
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -66,28 +69,39 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mForecastAdapter = new ArrayAdapter<String>(getActivity(),
-                                                    R.layout.list_item_forecast,
-                                                    R.id.list_item_forecast_textview,
-                                                    new ArrayList<String>());
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+
+        //Sort order: Ascending, by date.
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting,System.currentTimeMillis() );
+
+        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
+                null,
+                null,
+                null,
+                sortOrder);
+
+        //Create mForecastAdapter with a new cursor. The list will be empty the first time we run.
+        mForecastAdapter = new ForecastAdapter(getActivity(), cur , 0);
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         ListView listview = (ListView) view.findViewById(R.id.listview_forecast);
         listview.setAdapter(mForecastAdapter);
 
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Context context = getActivity();
-                String forecast = mForecastAdapter.getItem(position).toString();
-
-                Intent startDetailActivityIntent = new Intent(context,DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, forecast);
-                startActivity(startDetailActivityIntent);
-
-            }
-        });
+//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Context context = getActivity();
+//                String forecast = mForecastAdapter.getItem(position).toString();
+//
+//                Intent startDetailActivityIntent = new Intent(context,DetailActivity.class)
+//                        .putExtra(Intent.EXTRA_TEXT, forecast);
+//                startActivity(startDetailActivityIntent);
+//
+//            }
+//        });
 
         return view;
     }
@@ -112,7 +126,7 @@ public class ForecastFragment extends Fragment {
     private void updateWeather() {
         //FetchWeatherTask weatherTask = new FetchWeatherTask();
 
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String location = sharedPref.getString(getString(R.string.pref_location_key),
