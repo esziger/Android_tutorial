@@ -94,7 +94,7 @@ public class ForecastAdapter extends CursorAdapter {
         viewHolder.date.setText(friendlyDate);
 
         // TODO Read weather forecast from cursor
-        String description = cursor.getColumnName(ForecastFragment.COL_WEATHER_DESC);
+        String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
         viewHolder.description.setText(description);
 
         Log.v("Description: ",description);
