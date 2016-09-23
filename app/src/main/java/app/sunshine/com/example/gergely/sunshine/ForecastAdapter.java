@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.Image;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,16 +87,18 @@ public class ForecastAdapter extends CursorAdapter {
         String description = cursor.getColumnName(ForecastFragment.COL_WEATHER_DESC);
         viewHolder.description.setText(description);
 
+        Log.v("Description: ",description);
+
         // Read user preference for metric or imperial temperature units
         boolean isMetric = Utility.isMetric(context);
 
         // Read high temperature from cursor
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        viewHolder.high.setText(Utility.formatTemperature(high, isMetric));
+        viewHolder.high.setText(Utility.formatTemperature(context, high, isMetric));
 
         // TODO Read low temperature from cursor
-        double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        viewHolder.low.setText(Utility.formatTemperature(low, isMetric));
+        double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
+        viewHolder.low.setText(Utility.formatTemperature(context, low, isMetric));
     }
 
 
