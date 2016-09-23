@@ -160,8 +160,10 @@ public class DetailFragment extends Fragment
 
         int weatherId = data.getInt(COL_WEATHER_WEATHER_ID);
 
-        String dataString = Utility.getFriendlyDayString(getActivity(), data.getLong(COL_WEATHER_DATE));
+        int imageIcon = Utility.getArtResourceForWeatherCondition(weatherId);
+        mDetailImage.setImageResource(imageIcon);
 
+        String dataString = Utility.getFriendlyDayString(getActivity(), data.getLong(COL_WEATHER_DATE));
 
         long date = data.getLong(COL_WEATHER_DATE);
         String friendlyDateText = Utility.getDayName(getActivity(), date);
@@ -180,9 +182,6 @@ public class DetailFragment extends Fragment
 
         mForeCastString = String.format("%s - %s - %s/%s", dataString, weatherDescription, high, low);
 
-        //TextView textView = (TextView)getView().findViewById(R.id.detail_text);
-        //textView.setText(mForeCastString);
-
         Float pressure = data.getFloat(COL_WEATHER_PRESSURE);
         Float degree = data.getFloat(COL_WEATHER_DEGREES);
         Float wind_speed = data.getFloat(COL_WEATHER_WIND_SPEED);
@@ -191,7 +190,6 @@ public class DetailFragment extends Fragment
         mDetailHigh.setText(high);
         mDetailLow.setText(low);
         mDetailDesc.setText(weatherDescription);
-        //mDetailDate.setText(dataString);
         mDetailPressure.setText(getActivity().getString(R.string.format_pressure, pressure));
         mDetailWind.setText(Utility.getFormattedWind(getActivity(), wind_speed, degree));
         mDetailHumidity.setText(getActivity().getString(R.string.format_humidity, humidity));
